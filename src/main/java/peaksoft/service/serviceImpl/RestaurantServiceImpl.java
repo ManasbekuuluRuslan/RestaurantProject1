@@ -12,22 +12,28 @@ import peaksoft.dto.response.PaginationResponse;
 import peaksoft.dto.response.RestaurantResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Restaurant;
+import peaksoft.entity.User;
+import peaksoft.exeptions.ConflictException;
 import peaksoft.exeptions.NotFoundException;
 import peaksoft.repository.RestaurantRepository;
+import peaksoft.repository.UserRepository;
 import peaksoft.service.RestaurantService;
+
+import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
+    private final UserRepository userRepository;
     @Override
     public SimpleResponse saveRestaurant(RestaurantRequest restaurantRequest) {
         Restaurant restaurant = new Restaurant();
         restaurant.setName(restaurantRequest.getName());
         restaurant.setLocation(restaurantRequest.getLocation());
         restaurant.setRestType(restaurantRequest.getRestType());
-        restaurant.setNumberOfEmployees(restaurantRequest.getNumberOfEmployees());
+        restaurant.setNumberOfEmployees(restaurantRepository.countUsers(restaurant.getId()));
         restaurant.setService(restaurantRequest.getService());
         restaurantRepository.save(restaurant);
         return SimpleResponse
@@ -67,7 +73,8 @@ public class RestaurantServiceImpl implements RestaurantService {
         return SimpleResponse
                 .builder()
                 .httpStatus(HttpStatus.OK)
-                .message(String.format("Restaurant with name: %s is successfully updated",restaurantRequest.getName()))
+                .message(String.format("Restaurant with name: %s is successfully updated",
+                        restaurantRequest.getName()))
                 .build();
     }
 
@@ -76,6 +83,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
                 ()->new NotFoundException("Restaurant with id: "+id+" doesn't exist!"));
         restaurantRepository.delete(restaurant);
+        List<User> users = restaurant.getUserList();
+        users.forEach(user -> user.setRestaurant(null));
+        restaurantRepository.delete(restaurant);
+        userRepository.saveAll(users);
         return SimpleResponse
                 .builder()
                 .httpStatus(HttpStatus.OK)

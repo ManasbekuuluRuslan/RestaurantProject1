@@ -11,9 +11,9 @@ public class RestaurantRequest {
     private String location;
     private String restType;
     private Integer numberOfEmployees;
-    private String service;
+    private Double service;
 
-    public RestaurantRequest(String name, String location, String restType, Integer numberOfEmployees, String service) {
+    public RestaurantRequest(String name, String location, String restType, Integer numberOfEmployees, Double service) {
         this.name = name;
         this.location = location;
         this.restType = restType;

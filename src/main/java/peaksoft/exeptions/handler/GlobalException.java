@@ -30,6 +30,16 @@ public class GlobalException {
         );
     }
 
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ExceptionResponse alreadyExistException(ConflictException e){
+        return new ExceptionResponse(
+                HttpStatus.CONFLICT,
+                e.getClass().getSimpleName(),
+                e.getMessage()
+        );
+    }
+
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionResponse handlerNotFoundException(BadRequestException e) {

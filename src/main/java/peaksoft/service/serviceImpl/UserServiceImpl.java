@@ -19,6 +19,8 @@ import peaksoft.service.UserService;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -27,13 +29,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
     @Override
-    public SimpleResponse saveUser(Long restaurantId, UserRequest userRequest) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(()->
-                new NotFoundException("Restaurant with id: "+restaurantId+" not found!"));
+    public SimpleResponse saveUser(UserRequest userRequest) {
         User user = new User();
         ZonedDateTime birthDate = userRequest.getDateOfBirth();
         ZonedDateTime currentDate = ZonedDateTime.now();
         long age = ChronoUnit.YEARS.between(birthDate, currentDate);
+
         if (userRequest.getRole().name().equals("CHEF")) {
             if (age < 25 || age > 45) {
                 throw new IllegalArgumentExceptionn("Powar's age should be between 25 and 45 years");
@@ -69,6 +70,10 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentExceptionn("All fields must be filled");
         }
 
+        long userCount = userRepository.count();
+        if(userCount > 15){
+            throw new IllegalArgumentExceptionn("We do not accept more than 15 employees, there is no vacation");
+        }
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setDateOfBirth(userRequest.getDateOfBirth());
@@ -77,7 +82,6 @@ public class UserServiceImpl implements UserService {
         user.setPhoneNumber(userRequest.getPhoneNumber());
         user.setRole(userRequest.getRole());
         user.setExperience(userRequest.getExperience());
-        user.setRestaurant(restaurant);
         userRepository.save(user);
         return SimpleResponse
                 .builder()
@@ -88,12 +92,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public SimpleResponse assignUserToRestaurant(Long userId, Long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() ->
+                   new NotFoundException("Restaurant with id  " + restaurantId + " not found !"));
+       User user = userRepository.findById(userId).orElseThrow(()->
+                new NotFoundException("User with id: "+userId+" not found!"));
+
+        if (restaurant.getNumberOfEmployees() <= 15) {
+            List<User> users = new ArrayList<>();
+            users.add(user);
+            restaurant.setUserList(users);
+            user.setRestaurant(restaurant);
+            restaurantRepository.save(restaurant);
+            userRepository.save(user);
+            return SimpleResponse.builder()
+                    .httpStatus(HttpStatus.OK)
+                    .message(String.format("User with id: "+ userId+" successfully added to restaurant with id: "+restaurantId))
+                    .build();
+        } else {
+            return SimpleResponse.builder()
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .message("Restaurant user count didn't more 15!")
+                    .build();
+        }
+    }
+
+    @Override
     public SimpleResponse sendRequest(Long restaurantId, User user) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new NotFoundException("Restaurant not found"));
         user.setRequestStatus("Pending");
         user.setRestaurant(restaurant);
-        userRepository.save(user);
         return SimpleResponse
                 .builder()
                 .httpStatus(HttpStatus.OK)
@@ -102,10 +131,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SimpleResponse processRequest(Long userId, String requestStatus) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Employee not found"));
-
+    public SimpleResponse processRequest(String userName, String requestStatus) {
+          User user = new User();
         if (requestStatus.equals("accept")) {
             user.setRequestStatus("Accepted");
         } else if (requestStatus.equals("reject")) {

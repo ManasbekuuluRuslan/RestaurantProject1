@@ -19,23 +19,13 @@ public class Restaurant {
     private String location;
     private String restType;
     private Integer numberOfEmployees;
-    private String service;
+    private Double service;
     @OneToMany(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH},mappedBy = "restaurant")
     private List<User> userList;
     @OneToMany(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH},mappedBy = "restaurant")
     private List<MenuItem>menuItemList;
-
-
-
-
-
-
-
-
-
-
     public Restaurant(Long id, String name, String location,
-                      String restType, Integer numberOfEmployees, String service) {
+                      String restType, Integer numberOfEmployees, Double service) {
         this.id = id;
         this.name = name;
         this.location = location;

@@ -16,10 +16,16 @@ public class UserApi {
     private final UserService userService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/{resId}")
-    public SimpleResponse saveUser(@PathVariable Long resId,@RequestBody UserRequest userRequest) {
-        return userService.saveUser(resId, userRequest);
+    @PostMapping
+    public SimpleResponse saveUser(@RequestBody UserRequest userRequest) {
+        return userService.saveUser(userRequest);
     }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("{userId}/{restaurantId}")
+    public SimpleResponse assignUserToCompany(@PathVariable Long userId, @PathVariable Long restaurantId) {
+        return userService.assignUserToRestaurant(userId,restaurantId);
+    }
+
     @PermitAll
     @GetMapping
     public PaginationResUser getPagination(@RequestParam int page, @RequestParam int size) {
@@ -51,8 +57,9 @@ public class UserApi {
 
     }
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/user/{userId}/request")
-    public SimpleResponse processRequest(@PathVariable("userId") Long userId, @RequestParam("status") String requestStatus) {
-        return  userService.processRequest(userId, requestStatus);
+    @PutMapping("/user/request")
+    public SimpleResponse processRequest(@RequestParam("userName") String userName,
+                                         @RequestParam("status") String requestStatus) {
+        return  userService.processRequest(userName, requestStatus);
     }
 }

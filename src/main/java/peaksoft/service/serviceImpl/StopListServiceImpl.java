@@ -38,6 +38,7 @@ public class StopListServiceImpl implements StopListService {
         stopList.setReason(stopListRequest.getReason());
         stopList.setDate(date);
         stopList.setMenuItem(menuItem);
+        menuItem.setStopList(stopList);
         stopListRepository.save(stopList);
         return SimpleResponse.builder().httpStatus(HttpStatus.OK)
                 .message(String.format("Menu with name: "+menuItem.getName()+
@@ -68,7 +69,7 @@ public class StopListServiceImpl implements StopListService {
        StopList stopList = stopListRepository.findById(id).orElseThrow(()->
                 new NotFoundException("StopList with id: "+id+" not found!"));
         stopList.setReason(stopListRequest.getReason());
-        stopList.setDate(stopListRequest.getDate());
+        stopList.setDate(ZonedDateTime.now());
         stopListRepository.save(stopList);
         return SimpleResponse.builder().httpStatus(HttpStatus.OK)
                 .message(String.format("StopList with reason: %s is  updated",

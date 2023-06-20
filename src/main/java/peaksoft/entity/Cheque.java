@@ -22,7 +22,7 @@ public class Cheque {
     private ZonedDateTime createdAt;
     @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE})
     private User user;
-    @ManyToMany(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE},mappedBy = "chequeList" )
     private List<MenuItem> menuItemList;
 
     public Cheque(Long id, double priceAverage, ZonedDateTime createdAt) {

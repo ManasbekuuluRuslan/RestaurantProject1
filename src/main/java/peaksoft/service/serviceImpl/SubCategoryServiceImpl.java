@@ -15,6 +15,10 @@ import peaksoft.exeptions.NotFoundException;
 import peaksoft.repository.CategoryRepository;
 import peaksoft.repository.SubCategoryRepository;
 import peaksoft.service.SubCategoryService;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,7 +31,11 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 new NotFoundException("Category with id: "+categoryId+" not found!"));
         SubCategory subCategory = new SubCategory();
         subCategory.setName(subCategoryRequest.getName());
+        List<SubCategory> subcategories = new ArrayList<>();
+        subcategories.add(subCategory);
+        category.setSubCategoryList(subcategories);
         subCategory.setCategory(category);
+        categoryRepository.save(category);
         subCategoryRepository.save(subCategory);
         return SimpleResponse
                 .builder()

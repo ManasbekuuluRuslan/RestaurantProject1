@@ -1,11 +1,7 @@
 package peaksoft.service.serviceImpl;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.config.JwtService;
@@ -18,7 +14,6 @@ import peaksoft.exeptions.BadCredentialException;
 import peaksoft.exeptions.NotFoundException;
 import peaksoft.repository.UserRepository;
 import peaksoft.service.AuthenticationService;
-
 import java.time.ZonedDateTime;
 
 
