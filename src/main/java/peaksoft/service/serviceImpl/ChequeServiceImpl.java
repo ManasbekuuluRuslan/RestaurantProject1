@@ -37,7 +37,6 @@ public class ChequeServiceImpl implements ChequeService {
         cheque.setPriceAverage(chequeRequest.getPriceAverage());
         cheque.setCreatedAt(ZonedDateTime.now());
         cheque.setUser(user);
-        cheque.setMenuItemList(chequeRequest.getMenuItems());
         if(user.getRole().name().equals("WAITER")){
             chequeRepository.save(cheque);
         }else {
@@ -81,11 +80,11 @@ public class ChequeServiceImpl implements ChequeService {
     @Override
     public PaginationCheque getPagination(Long id, int page, int size) {
         Pageable pageable = PageRequest.of(page-1, size);
-        Page<ChequeResponse>chequeResponses = chequeRepository.getAllMenuItems(id,pageable);
+        Page<ChequeResponse>all = chequeRepository.getAllMenuItems(id,pageable);
         return PaginationCheque.builder()
-                .chequeResponseList(chequeResponses.getContent())
-                .pageSize(chequeResponses.getNumber()+1)
-                .currentPage(chequeResponses.getTotalPages())
+                .chequeResponseList(all.getContent())
+                .currentPage(all.getNumber()+1)
+                .pageSize(all.getTotalPages())
                 .build();
     }
     @Override
