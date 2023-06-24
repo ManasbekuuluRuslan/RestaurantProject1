@@ -50,6 +50,15 @@ public class GlobalException {
                 e.getMessage()
         );
     }
+    @ExceptionHandler(AllReadyExistException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ExceptionResponse alreadyExistException(AllReadyExistException e){
+        return new  ExceptionResponse(
+                HttpStatus.CONFLICT,
+                e.getClass().getSimpleName(),
+                e.getMessage()
+              );
+    }
     @ExceptionHandler(IllegalArgumentExceptionn.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionResponse exceptionResponse(IllegalArgumentExceptionn e){

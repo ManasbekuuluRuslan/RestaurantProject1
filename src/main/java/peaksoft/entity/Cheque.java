@@ -3,6 +3,7 @@ package peaksoft.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -19,13 +20,13 @@ public class Cheque {
     @SequenceGenerator(name = "cheque_gen",sequenceName = "cheque_seq", allocationSize = 1)
     private Long id;
     private double priceAverage;
-    private ZonedDateTime createdAt;
+    private LocalDate createdAt;
     @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE})
     private User user;
     @ManyToMany(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE},mappedBy = "chequeList" )
     private List<MenuItem> menuItemList;
 
-    public Cheque(Long id, double priceAverage, ZonedDateTime createdAt) {
+    public Cheque(Long id, double priceAverage, LocalDate createdAt) {
         this.id = id;
         this.priceAverage = priceAverage;
         this.createdAt = createdAt;

@@ -9,4 +9,7 @@ public interface CategoryService {
     CategoryResponse getById(Long id);
     SimpleResponse updateCategory(Long id, CategoryRequest categoryRequest);
     SimpleResponse deleteCategory(Long id);
+    PaginationCatRes searchCategoryByName(String word, int page, int size);
+
+
 }

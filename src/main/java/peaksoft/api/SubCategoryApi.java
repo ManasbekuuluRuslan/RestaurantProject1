@@ -15,9 +15,9 @@ public class SubCategoryApi {
     private final SubCategoryService subCategoryService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/{subId}")
-    public SimpleResponse saveSubCategory(@PathVariable Long subId, @RequestBody SubCategoryRequest subCategoryRequest) {
-        return subCategoryService.saveSubCategory(subId, subCategoryRequest);
+    @PostMapping("/{catId}")
+    public SimpleResponse saveSubCategory(@PathVariable Long catId, @RequestBody SubCategoryRequest subCategoryRequest) {
+        return subCategoryService.saveSubCategory(catId, subCategoryRequest);
     }
     @PermitAll
     @GetMapping
@@ -42,5 +42,20 @@ public class SubCategoryApi {
     @DeleteMapping("/{id}")
     public SimpleResponse deleteSubCategory(@PathVariable Long id) {
         return subCategoryService.deleteSubCategory(id);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','CHEF','WAITER')")
+    @GetMapping("/byGroup")
+    public PaginationSubRes getSubCategoryByGroup(@RequestParam int page ,
+                                                               @RequestParam int size){
+        return subCategoryService.getAllSubCategoryByGroup(page, size);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','CHEF','WAITER')")
+    @GetMapping("/search")
+    public PaginationSubRes search(@RequestParam String word,
+                                                @RequestParam int page ,
+                                                @RequestParam int size){
+        return subCategoryService.searchByName(word, page, size);
     }
 }

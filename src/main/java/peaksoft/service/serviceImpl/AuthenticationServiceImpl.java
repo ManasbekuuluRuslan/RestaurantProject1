@@ -1,5 +1,6 @@
 package peaksoft.service.serviceImpl;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,85 +11,82 @@ import peaksoft.dto.request.SignUpRequest;
 import peaksoft.dto.response.AuthenticationResponse;
 import peaksoft.entity.User;
 import peaksoft.enums.Role;
+import peaksoft.exeptions.AllReadyExistException;
 import peaksoft.exeptions.BadCredentialException;
 import peaksoft.exeptions.NotFoundException;
 import peaksoft.repository.UserRepository;
 import peaksoft.service.AuthenticationService;
-import java.time.ZonedDateTime;
+
+import java.time.LocalDate;
+
 
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-
-
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
-    public AuthenticationResponse signUp(SignUpRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new BadCredentialException("Email already exists");
+    public AuthenticationResponse signUp(SignUpRequest signUpRequest) {
+        if (userRepository.existsByEmail(signUpRequest.email())) {
+            throw new AllReadyExistException(String.format(
+                    "User with email: %s already exists!", signUpRequest.email()));
         }
-
-        User user = User
-                .builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.ADMIN)
-                .dateOfBirth(ZonedDateTime.now())
-                .experience(request.getExperience())
-                .phoneNumber(request.getPhoneNumber())
-                .build();
+        User user = new User();
+        user.setFirstName(signUpRequest.firstName());
+        user.setLastName(signUpRequest.lastName());
+        user.setEmail(signUpRequest.email());
+        user.setDateOfBirth(signUpRequest.dateTime());
+        user.setExperience(signUpRequest.experience());
+        user.setPhoneNumber(signUpRequest.phoneNumber());
+        user.setPassword(passwordEncoder.encode(signUpRequest.password()));
+        user.setRole(signUpRequest.role());
         userRepository.save(user);
-
+        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse
-                .builder()
-                .token(jwtService.generateToken(user))
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
+                .builder().
+                token(jwtToken).
+                email(user.getEmail()).
+                role(user.getRole()).
+                build();
     }
 
     @Override
-    public AuthenticationResponse signIn(SignInRequest request) {
-        User user = userRepository.getUserByEmail(request.getEmail()).orElseThrow(
-                () -> new NotFoundException("User with email: " + request.getEmail() + " not found!")
-        );
-
-        if (request.getPassword().isBlank()) {
-            throw new BadCredentialException("Password is blank");
+    public AuthenticationResponse signIn(SignInRequest signInRequest) {
+        if (signInRequest.email().isBlank()) {
+            throw new BadCredentialException("Email doesn't exist!");
         }
+        User user = userRepository.getUserByEmail(signInRequest.email()).orElseThrow(() ->
+             new NotFoundException("User with email: " + signInRequest.email() + " not found"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialException("Wrong password!");
+        if (!passwordEncoder.matches(signInRequest.password(), user.getPassword())) {
+            throw new BadCredentialException("Incorrect password!");
         }
-
+        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse
                 .builder()
-                .token(jwtService.generateToken(user))
                 .email(user.getEmail())
                 .role(user.getRole())
+                .token(jwtToken)
                 .build();
     }
 
-//    @PostConstruct
-//    public void initAdmin() {
-//        User user = User.builder()
-//                .firstName("Admin")
-//                .lastName("Super")
-//                .email("admin@gmail.com")
-//                .password(passwordEncoder.encode("admin"))
-//                .role(Role.ADMIN)
-//                .dateOfBirth(ZonedDateTime.now())
-//                .phoneNumber("0505555555")
-//                .experience(9)
-//                .build();
-//        userRepository.save(user);
-//    }
+    @PostConstruct
+    private void initAdmin() {
+        User admin = new User();
+        admin.setFirstName("Ruslan");
+        admin.setLastName("Kabylov");
+        admin.setEmail("ruslan@gmail.com");
+        admin.setDateOfBirth(LocalDate.of(2002, 4,12));
+        admin.setPassword(passwordEncoder.encode("ruslan123"));
+        admin.setPhoneNumber("+996505120402");
+        admin.setRole(Role.ADMIN);
+        if (!userRepository.existsByEmail("ruslan@gmail.com")) {
+            userRepository.save(admin);
+        }
+    }
 }

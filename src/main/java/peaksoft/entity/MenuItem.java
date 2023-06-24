@@ -28,7 +28,7 @@ public class MenuItem {
     private List<Cheque> chequeList;
     @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.MERGE,CascadeType.DETACH})
     private SubCategory subcategory;
-    @OneToOne(cascade = {CascadeType.REFRESH,CascadeType.MERGE,CascadeType.DETACH},mappedBy = "menuItem")
+    @OneToOne(cascade = {CascadeType.REFRESH,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REMOVE},mappedBy = "menuItem")
     private StopList stopList;
 
     public MenuItem(Long id, String name, String image, double price, String description, boolean isVegetarian) {

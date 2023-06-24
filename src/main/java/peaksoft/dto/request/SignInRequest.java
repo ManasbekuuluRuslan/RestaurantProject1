@@ -1,14 +1,9 @@
 package peaksoft.dto.request;
 
+import lombok.Builder;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-@AllArgsConstructor
-public class SignInRequest {
-    private String email;
-    private String password;
+@Builder
+public record SignInRequest(String email,String password) {
+    public SignInRequest {
+    }
 }

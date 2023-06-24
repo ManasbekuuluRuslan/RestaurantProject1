@@ -20,9 +20,9 @@ public class Restaurant {
     private String restType;
     private Integer numberOfEmployees;
     private Double service;
-    @OneToMany(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH},mappedBy = "restaurant")
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "restaurant")
     private List<User> userList;
-    @OneToMany(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH},mappedBy = "restaurant")
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "restaurant")
     private List<MenuItem>menuItemList;
     public Restaurant(Long id, String name, String location,
                       String restType, Integer numberOfEmployees, Double service) {

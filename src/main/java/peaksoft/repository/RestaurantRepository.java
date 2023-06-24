@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import peaksoft.dto.response.RestaurantResponse;
 import peaksoft.entity.Restaurant;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
@@ -16,6 +15,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
             "(r.id,r.name,r.location,r.restType) from Restaurant r")
     Page<RestaurantResponse> getAllRestaurants(Pageable pageable);
     Optional<RestaurantResponse> findRestaurantById (Long id);
-    @Query("select count (u) from User u where u.restaurant.id=:id")
+    @Query("select count (u) from User u where u.restaurant.id = :id")
     int countUsers(Long id);
+
 }

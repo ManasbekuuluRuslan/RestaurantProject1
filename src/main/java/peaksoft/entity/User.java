@@ -6,6 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import peaksoft.enums.Role;
+
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +25,7 @@ public class User implements UserDetails {
     private Long id;
     private String firstName;
     private String lastName;
-    private ZonedDateTime dateOfBirth;
+    private LocalDate dateOfBirth;
     @Column(unique = true)
     private String email;
     private String password;
@@ -37,7 +39,7 @@ public class User implements UserDetails {
     @OneToMany(cascade = {CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE},mappedBy = "user")
     private List<Cheque>chequeList;
 
-    public User(Long id, String firstName, String lastName, ZonedDateTime dateOfBirth, String email, String password, String phoneNumber, Role role, Integer experience) {
+    public User(Long id, String firstName, String lastName, LocalDate dateOfBirth, String email, String password, String phoneNumber, Role role, Integer experience) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -49,7 +51,7 @@ public class User implements UserDetails {
         this.experience = experience;
     }
 
-    public User(Long id, String firstName, String lastName, ZonedDateTime dateOfBirth, String email, String password, String phoneNumber, Role role, Integer experience, String requestStatus) {
+    public User(Long id, String firstName, String lastName, LocalDate dateOfBirth, String email, String password, String phoneNumber, Role role, Integer experience, String requestStatus) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

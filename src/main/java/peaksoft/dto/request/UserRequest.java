@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import peaksoft.enums.Role;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor
@@ -14,7 +15,7 @@ import java.time.ZonedDateTime;
 public class UserRequest {
     private String firstName;
     private String lastName;
-    private ZonedDateTime dateOfBirth;
+    private LocalDate dateOfBirth;
     private String email;
     private String password;
     private String phoneNumber;
@@ -23,7 +24,7 @@ public class UserRequest {
     private Integer experience;
 
     public UserRequest(String firstName, String lastName,
-                       ZonedDateTime dateOfBirth, String email,
+                       LocalDate dateOfBirth, String email,
                        String password, String phoneNumber,
                        Role role, Integer experience) {
         this.firstName = firstName;

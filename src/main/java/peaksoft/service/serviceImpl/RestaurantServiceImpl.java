@@ -33,6 +33,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setName(restaurantRequest.getName());
         restaurant.setLocation(restaurantRequest.getLocation());
         restaurant.setRestType(restaurantRequest.getRestType());
+
         restaurant.setNumberOfEmployees(restaurantRepository.countUsers(restaurant.getId()));
         restaurant.setService(restaurantRequest.getService());
         restaurantRepository.save(restaurant);

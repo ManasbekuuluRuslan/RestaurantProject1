@@ -84,4 +84,26 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .httpStatus(HttpStatus.OK)
                 .message(String.format("SubCategory with id: %s is successfully deleted",id))
                 .build();    }
+
+    @Override
+    public PaginationSubRes getAllSubCategoryByGroup(int page, int size) {
+        Pageable pageable = PageRequest.of(page-1,size);
+        Page<SubCategoryResponse> all = subCategoryRepository.getAllSubCategoryByGroup(pageable);
+        return PaginationSubRes.builder()
+                .subCategoryResponseList(all.getContent())
+                .currentPage(all.getNumber()+1)
+                .pageSize(all.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public PaginationSubRes searchByName(String word, int page, int size) {
+        Pageable pageable = PageRequest.of(page-1,size);
+        Page<SubCategoryResponse> all = subCategoryRepository.search(word, pageable);
+        return PaginationSubRes.builder()
+                .subCategoryResponseList(all.getContent())
+                .currentPage(all.getNumber()+1)
+                .pageSize(all.getTotalPages())
+                .build();
+    }
 }

@@ -9,4 +9,6 @@ public interface SubCategoryService {
     SubCategoryResponse getById(Long id);
     SimpleResponse updateSubCategory(Long id, SubCategoryRequest subCategoryRequest);
     SimpleResponse deleteSubCategory(Long id);
+    PaginationSubRes getAllSubCategoryByGroup(int page, int size);
+    PaginationSubRes searchByName(String word,int page, int size);
 }

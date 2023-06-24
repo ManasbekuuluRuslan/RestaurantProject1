@@ -1,21 +1,24 @@
 package peaksoft.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import peaksoft.enums.Role;
+import peaksoft.validation.EmailValid;
+import peaksoft.validation.PasswordValid;
+import peaksoft.validation.PhoneNumberValid;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class SignUpRequest {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private ZonedDateTime dateTime;
-    private Integer experience;
-    private String phoneNumber;
+public record SignUpRequest (
+        String firstName,
+        String lastName,
+        @EmailValid
+        String email,
+        @PasswordValid
+        String password,
+        LocalDate dateTime,
+        Integer experience,
+        @PhoneNumberValid
+        String phoneNumber,
+        Role role){
 
 }
